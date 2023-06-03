@@ -6,10 +6,10 @@ dotenv.config({path: ".env"});
 const port = process.env.SERVER_PORT;
 
 const clientRosRest = rosRest({
-    host: process.env.ROS_HOST,
-    user: process.env.ROS_USER,
-    password: process.env.ROS_PSWD,
-    port: process.env.ROS_PORT,
+    host: process.env.ROS_HOST_PROD,
+    user: process.env.ROS_USER_PROD,
+    password: process.env.ROS_PSWD_PROD,
+    port: process.env.ROS_PORT_PROD,
     secure: false,
 });
 
@@ -28,6 +28,22 @@ app.get('/userman/user/v1', async (req, res) => {
         res.send({error: err.message});
     }
 });
+
+app.post('/userman/session/v1', async(req, res) => {
+    const {user, active} = req.body;
+    try {
+        const query = '/user-manager/session/print';
+        if(user || active){
+            const sessionList = await clientRosRest.command(query, {
+                '.proplist': '.id,user,active',
+                '.query': [`user=${user}`,`active=${active}`,'#&']
+            });
+            res.json(sessionList.data);
+        }
+    } catch (err) {
+        res.send({error: err.message});
+    }
+})
 
 app.put('/userman/user/add/v1', async (req, res) => {
     const {name, password, group} = req.body;
@@ -80,6 +96,21 @@ app.delete('/userman/user/delete/v1', async (req, res) => {
         res.send({
             status: 'User has been deleted'
         });
+    } catch (err) {
+        res.status(500).send({error: err.message});
+    }
+})
+
+app.post('/userman/session/delete/v1', async (req, res) => {
+    const {id} = req.body;
+    try {
+        const query = '/user-manager/session/remove';
+        const sessionDelete = await clientRosRest.command(query, {
+            ".id": `*${id}`
+        });
+        res.send({
+            status: 'Session has been deleted'
+        })
     } catch (err) {
         res.status(500).send({error: err.message});
     }
