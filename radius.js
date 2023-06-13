@@ -6,10 +6,10 @@ dotenv.config({path: ".env"});
 const port = process.env.SERVER_PORT;
 
 const clientRosRest = rosRest({
-    host: process.env.ROS_HOST_PROD,
-    user: process.env.ROS_USER_PROD,
-    password: process.env.ROS_PSWD_PROD,
-    port: process.env.ROS_PORT_PROD,
+    host: process.env.ROS_HOST,
+    user: process.env.ROS_USER,
+    password: process.env.ROS_PSWD,
+    port: process.env.ROS_PORT,
     secure: false,
 });
 
