@@ -1,4 +1,4 @@
-const userModel = require('../models/userModel');
+const userModel = require('../models/radiusModels');
 
 exports.getSessionList = async (req, res) => {
     const { user, active } = req.body;
